@@ -72,4 +72,3 @@ def category_posts(request, category_slug):
             ]
         }
     )
-
