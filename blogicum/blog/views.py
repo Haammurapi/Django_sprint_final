@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import Http404
 
+# Исходный список постов
 posts = [
     {
         'id': 0,
@@ -44,13 +45,17 @@ posts = [
     },
 ]
 
+# Создаем словарь для быстрого доступа к постам по их id
+posts_dict = {post['id']: post for post in posts}
+
 
 def index(request):
-    return render(request, 'blog/index.html', {'posts': reversed(posts)})
+    return render(request, 'blog/index.html', {'posts': posts[::-1]})
 
 
 def post_detail(request, id):
-    post = next((post for post in posts if post['id'] == id), None)
+    # Используем словарь для поиска поста по id
+    post = posts_dict.get(id)
     if post is None:
         raise Http404("Публикация не найдена.")
     return render(request, 'blog/detail.html', {'post': post})
@@ -62,6 +67,9 @@ def category_posts(request, category_slug):
         'blog/category.html',
         {
             'category': category_slug,
-            'posts': (post for post in posts if post['category'] == category_slug)
+            'posts': [
+                post for post in posts if post['category'] == category_slug
+            ]
         }
     )
+
